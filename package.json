@@ -6,6 +6,9 @@
   "directories": {
     "test": "test"
   },
+  "bin": {
+    "spinup": "./bin/spinup"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
