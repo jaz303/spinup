@@ -16,7 +16,7 @@ Let's take a look at a simple `spin.up` file:
 
 And when we run `spinup`:
 
-    ![spinup screenshot](https://raw.githubusercontent.com/jaz303/spinup/master/screenshot.png)
+![spinup screenshot](https://raw.githubusercontent.com/jaz303/spinup/master/screenshot.png)
 
 `spinup` will run until all child processes have exited. Hit `Ctrl-C` to send `SIGINT` to any that are still running.
 
