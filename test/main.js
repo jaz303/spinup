@@ -1,0 +1,3 @@
+window.init = function() {
+
+}

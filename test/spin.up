@@ -1,0 +1,5 @@
+# webserver
+python -m SimpleHTTPServer 9000
+
+# compile javascript
+watchify -o bundle.js main.js
