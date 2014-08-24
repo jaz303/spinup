@@ -2,5 +2,4 @@
 window.init = function() {
 
 }
-
 },{}]},{},["/Users/jason/dev/projects/spinup/test/main.js"]);

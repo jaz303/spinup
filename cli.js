@@ -1,5 +1,6 @@
 var fs = require('fs');
 var spawn = require('child_process').spawn;
+var parse = require('shell-quote').parse;
 
 var commands, procs = [], exiting = false;
 
@@ -39,7 +40,7 @@ if (!exiting) {
     
     procs = commands.map(function(c, taskIx) {
 
-        var args    = c.split(/\s+/);
+        var args    = parse(c);
         var cmd     = args.shift();
         var color   = makeColor();
         
