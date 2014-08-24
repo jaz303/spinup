@@ -14,7 +14,7 @@ try {
 
 } catch (e) {
 
-    process.stderr.write("no spin.up file found!");
+    process.stderr.write("no spin.up file found!\n");
     process.exit(1);
 
 }
