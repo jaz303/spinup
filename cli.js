@@ -8,7 +8,7 @@ try {
     
     commands = fs
         .readFileSync('spin.up', {encoding: 'utf8'})
-        .split(/\n+/)
+        .split(/(?:\r\n?|\n)/)
         .map(function(l) { return l.replace(/#[^$]*$/, ''); })
         .map(function(l) { return l.trim(); })
         .filter(function(l) { return l.length > 0; });
