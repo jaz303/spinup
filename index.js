@@ -43,7 +43,6 @@ function spinup(commands, opts) {
         introducer
             .pipe(makeColorizer())
             .pipe(stderr);
-
         introducer.write(c + "\n");
 
         child.stdout.setEncoding('utf8');
