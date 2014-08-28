@@ -17,7 +17,7 @@ function spinup(commands, opts) {
 
     procs = commands.map(function(c, taskIx) {
 
-        var args    = parse(c);
+        var args    = parse(c, env);
         var cmd     = args.shift();
         var color   = colors.next();
         

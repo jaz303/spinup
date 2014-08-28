@@ -5,3 +5,5 @@ python -m SimpleHTTPServer 9000
 watchify -o bundle.js main.js
 
 echo "let's \"test\"" "the argument" parser
+
+echo "your home directory is:" $HOME
