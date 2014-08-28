@@ -4,4 +4,4 @@ python -m SimpleHTTPServer 9000
 # compile javascript
 watchify -o bundle.js main.js
 
-echo "let's test" "the argument" parser
+echo "let's \"test\"" "the argument" parser

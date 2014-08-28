@@ -1,6 +1,8 @@
-var spawn = require('child_process').spawn;
-var parse = require('shell-quote').parse;
-
+var spawn       = require('child_process').spawn;
+var parse       = require('shell-quote').parse;
+var colorize    = require('colorize-stream');
+var list        = require('list-cycler');
+var through     = require('through');
 
 module.exports = spinup;
 function spinup(commands, opts) {
@@ -10,19 +12,14 @@ function spinup(commands, opts) {
     var stdout      = opts.stdout || process.stdout;
     var stderr      = opts.stderr || process.stderr;
     var env         = opts.env || process.env;
-    var colorize    = ('color' in opts) ? (!!opts.color) : stdout.isTTY;
-
-    var nextColor = 0;
-    function makeColor() {
-        // cycles green, yellow, blue, magenta, cyan
-        return ((nextColor++) % 5) + 2;
-    }
+    var useColor    = ('color' in opts) ? (!!opts.color) : stdout.isTTY;
+    var colors      = list(['green', 'yellow', 'blue', 'magenta', 'cyan']);
 
     procs = commands.map(function(c, taskIx) {
 
         var args    = parse(c);
         var cmd     = args.shift();
-        var color   = makeColor();
+        var color   = colors.next();
         
         var child   = spawn(cmd, args, {
             env         : env,
@@ -30,30 +27,40 @@ function spinup(commands, opts) {
             detached    : true
         });
         
-        var prefix  = "[" + taskIx + ":" + child.pid + "]";
+        var prefix  = "[" + taskIx + ":" + child.pid + "] ";
 
-        function _colorize(text) {
-            if (colorize) {
-                return "\x1b[3" + color + "m" + text + "\x1b[0m";   
-            } else {
-                return text;
-            }
+        function makePrefixer() {
+            return through(function(data) {
+                this.queue(prefix + data);
+            });
         }
 
-        stderr.write(_colorize(prefix + " " + c) + "\n");
+        function makeColorizer() {
+            return useColor ? colorize(color) : new stream.PassThrough();
+        }
+
+        var introducer = makePrefixer();
+        introducer
+            .pipe(makeColorizer())
+            .pipe(stderr);
+
+        introducer.write(c + "\n");
+        // introducer.unpipe();
 
         child.stdout.setEncoding('utf8');
-        child.stdout.on('data', function(str) {
-            stdout.write(_colorize(prefix + " " + str));
-        });
+        child.stdout
+            .pipe(makePrefixer())
+            .pipe(makeColorizer())
+            .pipe(stdout);
 
         child.stderr.setEncoding('utf8');
-        child.stderr.on('data', function(str) {
-            stderr.write(_colorize(prefix + " " + str));
-        });
+        child.stderr
+            .pipe(makePrefixer())
+            .pipe(makeColorizer())
+            .pipe(stderr);
 
         child.on('exit', function() {
-            stderr.write(prefix + " terminated\n");
+            stderr.write(prefix + "terminated\n");
             child.exited = true;
         });
 
