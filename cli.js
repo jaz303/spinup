@@ -1,12 +1,13 @@
 var spinup = require('./index');
 var fs = require('fs');
 
+var spinfile = process.argv[2] || 'spin.up';
 var commands, instance = null, exiting = false;
 
 try {
     
     commands = fs
-        .readFileSync('spin.up', {encoding: 'utf8'})
+        .readFileSync(spinfile, {encoding: 'utf8'})
         .split(/(?:\r\n?|\n)/)
         .map(function(l) { return l.replace(/#[^$]*$/, ''); })
         .map(function(l) { return l.trim(); })
@@ -14,7 +15,7 @@ try {
 
 } catch (e) {
 
-    process.stderr.write("no spin.up file found!\n");
+    process.stderr.write("couldn't open spinup config: " + spinfile + "\n");
     process.exit(1);
 
 }
