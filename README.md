@@ -1,6 +1,6 @@
 # spinup
 
-`spinup` is a dead simple runner for long-running processes, designed for use during development. Simply create a `spin.up` file containing one shell command per line and launch them all by running `spinup`.
+`spinup` is a dead simple runner for long-running processes (such as servers and file-watchers) designed for use during development. Simply create a `spin.up` file containing one shell command per line and launch them all by running `spinup`.
 
 Let's take a look at a simple `spin.up` file:
 
@@ -13,6 +13,9 @@ Let's take a look at a simple `spin.up` file:
     # just to demonstrate that arguments are parsed correctly
     # (courtesy of substack/shell-quote)
     echo "let's test" "the argument" parser
+
+    # environment variables can be used too:
+    echo "your home directory is:" $HOME
 
 And when we run `spinup`:
 
