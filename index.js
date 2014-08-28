@@ -45,7 +45,6 @@ function spinup(commands, opts) {
             .pipe(stderr);
 
         introducer.write(c + "\n");
-        // introducer.unpipe();
 
         child.stdout.setEncoding('utf8');
         child.stdout
