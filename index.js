@@ -9,9 +9,9 @@ function spinup(commands, opts) {
 
     opts = opts || {};
 
-    var stdout      = opts.stdout || process.stdout;
-    var stderr      = opts.stderr || process.stderr;
-    var env         = opts.env || process.env;
+    var stdout      = opts.stdout;
+    var stderr      = opts.stderr;
+    var env         = opts.env || {};
     var useColor    = ('color' in opts) ? (!!opts.color) : stdout.isTTY;
     var colors      = list(['green', 'yellow', 'blue', 'magenta', 'cyan']);
 
@@ -39,31 +39,41 @@ function spinup(commands, opts) {
             return useColor ? colorize(color) : new stream.PassThrough();
         }
 
-        var introducer = makePrefixer();
-        introducer
-            .pipe(makeColorizer())
-            .pipe(stderr);
-        introducer.write(c + "\n");
+        if (stderr) {
+            var introducer = makePrefixer();
+            introducer
+                .pipe(makeColorizer())
+                .pipe(stderr);
+            introducer.write(c + "\n");    
+        }
+        
+        if (stdout) {
+            child.stdout.setEncoding('utf8');
+            child.stdout
+                .pipe(makePrefixer())
+                .pipe(makeColorizer())
+                .pipe(stdout);    
+        }
 
-        child.stdout.setEncoding('utf8');
-        child.stdout
-            .pipe(makePrefixer())
-            .pipe(makeColorizer())
-            .pipe(stdout);
-
-        child.stderr.setEncoding('utf8');
-        child.stderr
-            .pipe(makePrefixer())
-            .pipe(makeColorizer())
-            .pipe(stderr);
+        if (stderr) {
+            child.stderr.setEncoding('utf8');
+            child.stderr
+                .pipe(makePrefixer())
+                .pipe(makeColorizer())
+                .pipe(stderr);    
+        }
 
         child.on('exit', function() {
-            stderr.write(prefix + "terminated\n");
+            if (stderr) {
+                stderr.write(prefix + "terminated\n");    
+            }
             child.exited = true;
         });
 
         child.on('error', function(err) {
-            stderr.write(err);
+            if (stderr) {
+                stderr.write(err);    
+            }
         });
 
         return child;

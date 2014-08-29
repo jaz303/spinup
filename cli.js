@@ -2,7 +2,7 @@ var spinup = require('./index');
 var fs = require('fs');
 
 var spinfile = process.argv[2] || 'spin.up';
-var commands, instance = null, exiting = false;
+var commands, instance = null, exiting = false, env = process.env;
 
 try {
     
@@ -29,5 +29,9 @@ process.on('SIGINT', function() {
 });
 
 if (!exiting) {
-    instance = spinup(commands);
+    instance = spinup(commands, {
+        env     : env,
+        stdout  : process.stdout,
+        stderr  : process.stderr
+    });
 }
