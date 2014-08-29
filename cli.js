@@ -9,7 +9,7 @@ try {
     commands = fs
         .readFileSync(spinfile, {encoding: 'utf8'})
         .split(/(?:\r\n?|\n)/)
-        .map(function(l) { return l.replace(/#[^$]*$/, ''); })
+        .map(function(l) { return l.replace(/#.*?$/, ''); })
         .map(function(l) { return l.trim(); })
         .filter(function(l) { return l.length > 0; });
 
