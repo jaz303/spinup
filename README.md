@@ -41,7 +41,7 @@ Leading lines of the `spin.up` file can include _directives_. Directives begin w
 
 ### `!ports`
 
-The `!ports` directive can be used to automatically create any number of environment variables with sequential integer values, starting from a given base. This is useful for generating port numbers for your services to listen on etc. Because the values are written to environment variables its possible to refer to the same value multiple times, i.e. in instances where one process needs to communicate with another. Let's take a look at how it works.
+The `!ports` directive can be used to automatically create any number of environment variables with sequential integer values, starting from a given base. This is useful for generating port numbers for your processes to listen on, connect to etc. Because the values are written to environment variables its possible to refer to the same value multiple times, i.e. in instances where one process needs to communicate with another. Let's take a look at how it works.
 
 This first example generates three port numbers, `$A`, `$B` and `$C`, starting from 5000. So `$A` is 5000, `$B` is 5001 etc:
 
