@@ -1,0 +1,5 @@
+!ports $BASE:5000 $A $B $C
+
+echo $A
+echo $B
+echo $C

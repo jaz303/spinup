@@ -13,11 +13,32 @@ try {
         .map(function(l) { return l.trim(); })
         .filter(function(l) { return l.length > 0; });
 
+    while (commands.length && commands[0].charAt(0) === '!') {
+        var directive = commands.shift();
+        if (directive.match(/^\!ports\s+(\$(\w+)\:)?(\d+)((\s+\$\w+)*)\s*$/)) {
+            var base = RegExp.$3;
+            if (RegExp.$2 && (RegExp.$2 in env)) {
+                base = env[RegExp.$2];
+            }
+            base = parseInt(base, 10);
+            if (!isFinite(base)) {
+                throw new Error("invalid base port; must be numeric");
+            }
+            RegExp.$4.trim().split(/\s+/).forEach(function(v) {
+                env[v.substring(1)] = base++;
+            });
+        } else {
+            throw new Error("unknown directive: " + directive);
+        }
+    }
+
 } catch (e) {
-
-    process.stderr.write("couldn't open spinup config: " + spinfile + "\n");
+    if (e.code === 'ENOENT') {
+        process.stderr.write("couldn't open spinup config: " + spinfile + "\n"); 
+    } else {
+        process.stderr.write(e.message + "\n");
+    }
     process.exit(1);
-
 }
 
 process.on('SIGINT', function() {
