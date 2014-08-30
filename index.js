@@ -34,7 +34,7 @@ function spinup(commands, opts) {
                     case 't': return taskIx;
                     case 'p': return child.pid;
                 }
-            });
+            }) + ' ';
         }
 
         function makePrefixer() {

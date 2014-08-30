@@ -1,3 +1,5 @@
+!prefix [%t:%p]
+
 # webserver
 python -m SimpleHTTPServer 9000
 
