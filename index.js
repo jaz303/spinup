@@ -14,6 +14,7 @@ function spinup(commands, opts) {
     var env         = opts.env || {};
     var useColor    = ('color' in opts) ? (!!opts.color) : stdout.isTTY;
     var colors      = list(['green', 'yellow', 'blue', 'magenta', 'cyan']);
+    var prefix      = opts.prefix || '[%t:%p] ';
 
     procs = commands.map(function(c, taskIx) {
 
@@ -26,12 +27,19 @@ function spinup(commands, opts) {
             stdio       : ['ignore', 'pipe', 'pipe'],
             detached    : true
         });
-        
-        var prefix  = "[" + taskIx + ":" + child.pid + "] ";
+
+        function _prefix() {
+            return prefix.replace(/%([tp])/g, function(m) {
+                switch (m[1]) {
+                    case 't': return taskIx;
+                    case 'p': return child.pid;
+                }
+            });
+        }
 
         function makePrefixer() {
             return through(function(data) {
-                this.queue(prefix + data);
+                this.queue(_prefix() + data);
             });
         }
 
@@ -40,11 +48,9 @@ function spinup(commands, opts) {
         }
 
         if (stderr) {
-            var introducer = makePrefixer();
-            introducer
-                .pipe(makeColorizer())
-                .pipe(stderr);
-            introducer.write(c + "\n");    
+            var introducer = makeColorizer()
+            introducer.pipe(stderr);
+            introducer.write(_prefix() + c + "\n");    
         }
         
         if (stdout) {
@@ -65,7 +71,7 @@ function spinup(commands, opts) {
 
         child.on('exit', function() {
             if (stderr) {
-                stderr.write(prefix + "terminated\n");    
+                stderr.write(_prefix() + "terminated\n");
             }
             child.exited = true;
         });

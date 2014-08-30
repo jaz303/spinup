@@ -2,7 +2,7 @@ var spinup = require('./index');
 var fs = require('fs');
 
 var spinfile = process.argv[2] || 'spin.up';
-var commands, instance = null, exiting = false, env = process.env;
+var commands, instance = null, exiting = false, prefix, env = process.env;
 
 try {
     
@@ -27,6 +27,8 @@ try {
             RegExp.$4.trim().split(/\s+/).forEach(function(v) {
                 env[v.substring(1)] = base++;
             });
+        } else if (directive.match(/^\!prefix\s+(.*?)$/)) {
+            prefix = RegExp.$1;
         } else {
             throw new Error("unknown directive: " + directive);
         }
@@ -53,6 +55,7 @@ if (!exiting) {
     instance = spinup(commands, {
         env     : env,
         stdout  : process.stdout,
-        stderr  : process.stderr
+        stderr  : process.stderr,
+        prefix  : prefix
     });
 }
