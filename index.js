@@ -14,7 +14,7 @@ function spinup(commands, opts) {
     var env         = opts.env || {};
     var useColor    = ('color' in opts) ? (!!opts.color) : stdout.isTTY;
     var colors      = list(['green', 'yellow', 'blue', 'magenta', 'cyan']);
-    var prefix      = opts.prefix || '[%t:%p] ';
+    var prefix      = opts.prefix === false ? '' : (opts.prefix || '[%t:%p]');
 
     procs = commands.map(function(c, taskIx) {
 
@@ -29,12 +29,27 @@ function spinup(commands, opts) {
         });
 
         function _prefix() {
-            return prefix.replace(/%([tp])/g, function(m) {
+            
+            var now = new Date();
+
+            function pad2(v) { return (v < 10 ? '0' : '') + v; }
+
+            var p = prefix.replace(/%([tpYymdHMs])/g, function(m) {
                 switch (m[1]) {
                     case 't': return taskIx;
                     case 'p': return child.pid;
+                    case 'Y': return now.getFullYear();
+                    case 'y': return now.getYear() % 100;
+                    case 'm': return pad2(now.getMonth() + 1);
+                    case 'd': return pad2(now.getDate());
+                    case 'H': return pad2(now.getHours());
+                    case 'M': return pad2(now.getMinutes());
+                    case 's': return pad2(now.getSeconds());
                 }
-            }) + ' ';
+            });
+
+            return p.length ? (p + ' ') : p;
+
         }
 
         function makePrefixer() {

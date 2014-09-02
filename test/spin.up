@@ -1,4 +1,4 @@
-!prefix [%t:%p]
+!prefix [%Y-%m-%dT%H:%M:%s | %t:%p]
 
 # webserver
 python -m SimpleHTTPServer 9000

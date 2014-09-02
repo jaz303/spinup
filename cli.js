@@ -2,7 +2,7 @@ var spinup = require('./index');
 var fs = require('fs');
 
 var spinfile = process.argv[2] || 'spin.up';
-var commands, instance = null, exiting = false, prefix, env = process.env;
+var commands, instance = null, exiting = false, prefix = null, env = process.env;
 
 try {
     
@@ -14,7 +14,7 @@ try {
         .filter(function(l) { return l.length > 0; });
 
     while (commands.length && commands[0].charAt(0) === '!') {
-        var directive = commands.shift();
+        var directive = commands.shift().trim();
         if (directive.match(/^\!ports\s+(\$(\w+)\:)?(\d+)((\s+\$\w+)*)\s*$/)) {
             var base = RegExp.$3;
             if (RegExp.$2 && (RegExp.$2 in env)) {
@@ -27,6 +27,8 @@ try {
             RegExp.$4.trim().split(/\s+/).forEach(function(v) {
                 env[v.substring(1)] = base++;
             });
+        } else if (directive.match(/^\!noprefix$/)) {
+            prefix = false;
         } else if (directive.match(/^\!prefix\s+(.*?)$/)) {
             prefix = RegExp.$1;
         } else {
