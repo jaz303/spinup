@@ -80,13 +80,13 @@ Supported substitutions:
 
   * `%t`: task number (i.e. the `t`th task listed in `spin.up`, starting from zero)
   * `%p`: process ID
-  * '%Y': year (4 digits)
-  * '%y': year (2 digits)
-  * '%m': month
-  * '%d': day
-  * '%H': hour
-  * '%M': minutes
-  * '%S': seconds
+  * `%Y`: year (4 digits)
+  * `%y`: year (2 digits)
+  * `%m`: month
+  * `%d`: day
+  * `%H`: hour
+  * `%M`: minutes
+  * `%S`: seconds
 
 The default prefix is `[%t:%p]`.
 
