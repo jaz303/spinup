@@ -34,7 +34,7 @@ function spinup(commands, opts) {
 
             function pad2(v) { return (v < 10 ? '0' : '') + v; }
 
-            var p = prefix.replace(/%([tpYymdHMs])/g, function(m) {
+            var p = prefix.replace(/%([tpYymdHMS])/g, function(m) {
                 switch (m[1]) {
                     case 't': return taskIx;
                     case 'p': return child.pid;
@@ -44,7 +44,7 @@ function spinup(commands, opts) {
                     case 'd': return pad2(now.getDate());
                     case 'H': return pad2(now.getHours());
                     case 'M': return pad2(now.getMinutes());
-                    case 's': return pad2(now.getSeconds());
+                    case 'S': return pad2(now.getSeconds());
                 }
             });
 
