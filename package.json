@@ -6,6 +6,16 @@
   "directories": {
     "test": "test"
   },
+  "keywords": [
+    "process",
+    "manager",
+    "spawn",
+    "task",
+    "runner",
+    "launcher",
+    "development",
+    "tool"
+  ],
   "bin": {
     "spinup": "./bin/spinup"
   },
