@@ -65,7 +65,7 @@ function spinup(commands, opts) {
         if (stderr) {
             var introducer = makeColorizer()
             introducer.pipe(stderr);
-            introducer.write(_prefix() + c + "\n");    
+            introducer.write(_prefix() + '$ ' + c + "\n");    
         }
         
         if (stdout) {
