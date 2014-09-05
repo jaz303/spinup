@@ -80,6 +80,7 @@ Supported substitutions:
 
   * `%t`: task number (i.e. the `t`th task listed in `spin.up`, starting from zero)
   * `%p`: process ID
+  * `%c`: command name; can optionally be suffixed with a number to restrict/pad output length
   * `%Y`: year (4 digits)
   * `%y`: year (2 digits)
   * `%m`: month
@@ -88,7 +89,7 @@ Supported substitutions:
   * `%M`: minutes
   * `%S`: seconds
 
-The default prefix is `[%t:%p]`.
+The default prefix is `[%t:%c6]`.
 
 ## Copyright &amp; License
 

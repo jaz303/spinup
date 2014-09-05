@@ -14,7 +14,7 @@ function spinup(commands, opts) {
     var env         = opts.env || {};
     var useColor    = ('color' in opts) ? (!!opts.color) : stdout.isTTY;
     var colors      = list(['green', 'yellow', 'blue', 'magenta', 'cyan']);
-    var prefix      = opts.prefix === false ? '' : (opts.prefix || '[%t:%p]');
+    var prefix      = opts.prefix === false ? '' : (opts.prefix || '[%t:%c8]');
 
     procs = commands.map(function(c, taskIx) {
 
@@ -34,7 +34,7 @@ function spinup(commands, opts) {
 
             function pad2(v) { return (v < 10 ? '0' : '') + v; }
 
-            var p = prefix.replace(/%([tpYymdHMS])/g, function(m) {
+            var p = prefix.replace(/%([tpYymdHMS]|(c\d*))/g, function(m) {
                 switch (m[1]) {
                     case 't': return taskIx;
                     case 'p': return child.pid;
@@ -45,6 +45,17 @@ function spinup(commands, opts) {
                     case 'H': return pad2(now.getHours());
                     case 'M': return pad2(now.getMinutes());
                     case 'S': return pad2(now.getSeconds());
+                    case 'c':
+                        if (m.length === 2) {
+                            return cmd;
+                        } else {
+                            var len = parseInt(m.substr(2), 10);
+                            var str = cmd.substr(0, len);
+                            while (str.length < len) {
+                                str += ' ';
+                            }
+                            return str;
+                        }
                 }
             });
 
@@ -58,12 +69,12 @@ function spinup(commands, opts) {
             });
         }
 
-        function makeColorizer() {
-            return useColor ? colorize(color) : new stream.PassThrough();
+        function makeColorizer(c) {
+            return useColor ? colorize(c) : new stream.PassThrough();
         }
 
         if (stderr) {
-            var introducer = makeColorizer()
+            var introducer = makeColorizer(color)
             introducer.pipe(stderr);
             introducer.write(_prefix() + '$ ' + c + "\n");    
         }
@@ -72,7 +83,7 @@ function spinup(commands, opts) {
             child.stdout.setEncoding('utf8');
             child.stdout
                 .pipe(makePrefixer())
-                .pipe(makeColorizer())
+                .pipe(makeColorizer(color))
                 .pipe(stdout);    
         }
 
@@ -80,7 +91,7 @@ function spinup(commands, opts) {
             child.stderr.setEncoding('utf8');
             child.stderr
                 .pipe(makePrefixer())
-                .pipe(makeColorizer())
+                .pipe(makeColorizer('red'))
                 .pipe(stderr);    
         }
 
