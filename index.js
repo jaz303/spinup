@@ -65,7 +65,7 @@ function spinup(commands, opts) {
 
         function makePrefixer() {
             return through(function(data) {
-                this.queue(_prefix() + data);
+                this.queue(data.trim().replace(/^/mg, _prefix()) + "\n");
             });
         }
 
