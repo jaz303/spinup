@@ -1,8 +1,11 @@
 var spinup = require('./index');
 var fs = require('fs');
+var path = require('path');
 
 var spinfile = process.argv[2] || 'spin.up';
 var commands, instance = null, exiting = false, prefix = null, env = process.env;
+
+env.SPINDIR = path.resolve(path.dirname(spinfile));
 
 try {
     
