@@ -1,11 +1,17 @@
 var spinup = require('./index');
 var fs = require('fs');
 var path = require('path');
+var dotenv = require('dotenv');
 
 var spinfile = process.argv[2] || 'spin.up';
+var spindir = path.resolve(path.dirname(spinfile));
+
+dotenv._getKeysAndValuesFromEnvFilePath(spindir + '/.env');
+dotenv._setEnvs();
+
 var commands, instance = null, exiting = false, prefix = null, env = process.env;
 
-env.SPINDIR = path.resolve(path.dirname(spinfile));
+env.SPINDIR = spindir;
 
 try {
     

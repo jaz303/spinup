@@ -23,6 +23,8 @@ And when we run `spinup`:
 
 `spinup` will run until all child processes have exited. Hit `Ctrl-C` to send `SIGINT` to any that are still running.
 
+`dotenv` is supported; any environment variables defined within `.env` will made available to the commands listed in `spin.up`.
+
 ## Installation
 
     npm install -g spinup

@@ -16,6 +16,9 @@ function spinup(commands, opts) {
     var colors      = list(['green', 'yellow', 'blue', 'magenta', 'cyan']);
     var prefix      = opts.prefix === false ? '' : (opts.prefix || '[%t:%c8]');
 
+    stdout.setMaxListeners(10000);
+    stderr.setMaxListeners(10000);
+
     procs = commands.map(function(c, taskIx) {
 
         var args    = parse(c, env);

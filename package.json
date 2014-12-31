@@ -34,6 +34,7 @@
   "homepage": "https://github.com/jaz303/spinup",
   "dependencies": {
     "colorize-stream": "^0.1.0",
+    "dotenv": "^0.4.0",
     "list-cycler": "0.0.2",
     "shell-quote": "^1.4.2",
     "through": "^2.3.4"

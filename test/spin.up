@@ -12,3 +12,9 @@ echo "let's test" "the argument" parser
 
 # environment variables can be used too:
 echo "your home directory is:" $HOME
+
+# environment variables are loaded from .env:
+echo $DOTENV_TEST
+
+# spinfile location
+echo "Directory of spin.up:" $SPINDIR
