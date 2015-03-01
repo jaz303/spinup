@@ -1,4 +1,5 @@
 var spawn       = require('child_process').spawn;
+var quote       = require('shell-quote').quote;
 var parse       = require('shell-quote').parse;
 var colorize    = require('colorize-stream');
 var list        = require('list-cycler');
@@ -21,11 +22,12 @@ function spinup(commands, opts) {
 
     procs = commands.map(function(c, taskIx) {
 
-        var args    = parse(c, env);
-        var cmd     = args.shift();
-        var color   = colors.next();
+        var args        = parse(c, env);
+        var commandLine = args.slice(0);
+        var cmd         = args.shift();
+        var color       = colors.next();
         
-        var child   = spawn(cmd, args, {
+        var child = spawn(cmd, args, {
             env         : env,
             stdio       : ['ignore', 'pipe', 'pipe'],
             detached    : true
@@ -79,7 +81,7 @@ function spinup(commands, opts) {
         if (stderr) {
             var introducer = makeColorizer(color)
             introducer.pipe(stderr);
-            introducer.write(_prefix() + '$ ' + c + "\n");    
+            introducer.write(_prefix() + '$ ' + quote(commandLine) + "\n");
         }
         
         if (stdout) {
