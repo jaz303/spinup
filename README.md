@@ -10,6 +10,11 @@ Let's take a look at a simple `spin.up` file:
     # compile javascript
     watchify -o bundle.js main.js
 
+    # command options are prefixed with @ and will be applied to next
+    # command line
+    @cd www
+    php -S 127.0.0.1:8000
+
     # just to demonstrate that arguments are parsed correctly
     # (courtesy of substack/shell-quote)
     echo "let's test" "the argument" parser
@@ -92,6 +97,14 @@ Supported substitutions:
   * `%S`: seconds
 
 The default prefix is `[%t:%c6]`.
+
+## Options
+
+Lines beginning with `@` define per-command options and will be applied to the next command read from the configuration file.
+
+### `@cd`
+
+Set the working directory for the command.
 
 ## Copyright &amp; License
 
