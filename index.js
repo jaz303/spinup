@@ -22,12 +22,13 @@ function spinup(commands, opts) {
 
     procs = commands.map(function(c, taskIx) {
 
-        var args        = parse(c, env);
+        var args        = parse(c.commandLine, env);
         var commandLine = args.slice(0);
         var cmd         = args.shift();
         var color       = colors.next();
         
         var child = spawn(cmd, args, {
+            cwd         : c.workingDirectory,
             env         : env,
             stdio       : ['ignore', 'pipe', 'pipe'],
             detached    : true

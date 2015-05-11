@@ -9,21 +9,43 @@ var spindir = path.resolve(path.dirname(spinfile));
 dotenv._getKeysAndValuesFromEnvFilePath(spindir + '/.env');
 dotenv._setEnvs();
 
-var commands, instance = null, exiting = false, prefix = null, env = process.env;
+var commands = [],
+    instance = null,
+    exiting = false,
+    prefix = null,
+    env = process.env;
 
 env.SPINDIR = spindir;
 
 try {
-    
-    commands = fs
+
+    var thisCommand;
+    function newCommand() {
+        thisCommand = {
+            commandLine: null
+        };
+    }
+    newCommand();
+
+    var lines = fs
         .readFileSync(spinfile, {encoding: 'utf8'})
         .split(/(?:\r\n?|\n)/)
         .map(function(l) { return l.replace(/#.*?$/, ''); })
         .map(function(l) { return l.trim(); })
-        .filter(function(l) { return l.length > 0; });
+        .filter(function(l) { return l.length > 0; })
+        .forEach(function(l) {
+            if (l[0] === '!') {
+                applyDirective(l);
+            } else if (l[0] === '@') {
+                applyCommandOption(l);
+            } else {
+                thisCommand.commandLine = l;
+                commands.push(thisCommand);
+                newCommand();
+            }
+        });
 
-    while (commands.length && commands[0].charAt(0) === '!') {
-        var directive = commands.shift().trim();
+    function applyDirective(directive) {
         if (directive.match(/^\!ports\s+(\$(\w+)\:)?(\d+)((\s+\$\w+)*)\s*$/)) {
             var base = RegExp.$3;
             if (RegExp.$2 && (RegExp.$2 in env)) {
@@ -42,6 +64,14 @@ try {
             prefix = RegExp.$1;
         } else {
             throw new Error("unknown directive: " + directive);
+        }
+    }
+
+    function applyCommandOption(option) {
+        if (option.match(/^@cd\s+([^$]+)$/)) {
+            thisCommand.workingDirectory = RegExp.$1;
+        } else {
+            throw new Error("unkown option: " + option);
         }
     }
 

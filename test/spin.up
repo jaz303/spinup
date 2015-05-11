@@ -18,3 +18,8 @@ echo $DOTENV_TEST
 
 # spinfile location
 echo "Directory of spin.up:" $SPINDIR
+
+# cd test
+@cd foobar
+cat test
+
