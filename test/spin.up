@@ -1,6 +1,7 @@
 !prefix [%Y-%m-%dT%H:%M:%S | %t:%c6]
 
 # webserver
+@kill SIGINT
 python -m SimpleHTTPServer 9000
 
 # compile javascript

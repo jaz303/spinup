@@ -22,7 +22,8 @@ try {
     var thisCommand;
     function newCommand() {
         thisCommand = {
-            commandLine: null
+            commandLine: null,
+            killSignal: 'SIGTERM'
         };
     }
     newCommand();
@@ -70,6 +71,8 @@ try {
     function applyCommandOption(option) {
         if (option.match(/^@cd\s+([^$]+)$/)) {
             thisCommand.workingDirectory = RegExp.$1;
+        } else if (option.match(/^@kill\s+([^$]+)$/)) {
+            thisCommand.killSignal = RegExp.$1;
         } else {
             throw new Error("unkown option: " + option);
         }

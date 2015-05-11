@@ -26,7 +26,7 @@ And when we run `spinup`:
 
 ![spinup screenshot](https://raw.githubusercontent.com/jaz303/spinup/master/screenshot.png)
 
-`spinup` will run until all child processes have exited. Hit `Ctrl-C` to send `SIGINT` to any that are still running.
+`spinup` will run until all child processes have exited. Hit `Ctrl-C` to send `SIGTERM` to any that are still running (this kill signal can be customised on a per-command basis, see the `@kill` option below).
 
 `dotenv` is supported; any environment variables defined within `.env` will made available to the commands listed in `spin.up`.
 
@@ -98,13 +98,17 @@ Supported substitutions:
 
 The default prefix is `[%t:%c6]`.
 
-## Options
+## Per-command Options
 
 Lines beginning with `@` define per-command options and will be applied to the next command read from the configuration file.
 
-### `@cd`
+### `@cd DIRECTORY`
 
 Set the working directory for the command.
+
+### `@kill SIGNAL`
+
+Set the name of the signal that should be used to kill the process.
 
 ## Copyright &amp; License
 

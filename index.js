@@ -34,6 +34,8 @@ function spinup(commands, opts) {
             detached    : true
         });
 
+        child.killSignal = c.killSignal;
+
         function _prefix() {
             
             var now = new Date();
@@ -122,7 +124,7 @@ function spinup(commands, opts) {
         kill: function(p) {
             procs.forEach(function(p) {
                 if (!p.exited) {
-                    p.kill();    
+                    p.kill(p.killSignal);    
                 }   
             });
         }
