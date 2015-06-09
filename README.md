@@ -111,7 +111,7 @@ Set the working directory for the command.
 
 Set the name of the signal that should be used to kill the process.
 
-### '@name NAME'
+### `@name NAME`
 
 Set the name that should be displayed by the `%n` prefix option.
 
