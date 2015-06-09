@@ -87,7 +87,8 @@ Supported substitutions:
 
   * `%t`: task number (i.e. the `t`th task listed in `spin.up`, starting from zero)
   * `%p`: process ID
-  * `%c`: command name; can optionally be suffixed with a number to restrict/pad output length
+  * `%c`: command; can optionally be suffixed with a number to restrict/pad output length
+  * '%n': command name, as specified by per-command option @name; if unspecified, defaults to command
   * `%Y`: year (4 digits)
   * `%y`: year (2 digits)
   * `%m`: month
@@ -109,6 +110,10 @@ Set the working directory for the command.
 ### `@kill SIGNAL`
 
 Set the name of the signal that should be used to kill the process.
+
+### '@name NAME'
+
+Set the name that should be displayed by the `%n` prefix option.
 
 ## Copyright &amp; License
 

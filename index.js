@@ -15,7 +15,7 @@ function spinup(commands, opts) {
     var env         = opts.env || {};
     var useColor    = ('color' in opts) ? (!!opts.color) : stdout.isTTY;
     var colors      = list(['green', 'yellow', 'blue', 'magenta', 'cyan']);
-    var prefix      = opts.prefix === false ? '' : (opts.prefix || '[%t:%c8]');
+    var prefix      = opts.prefix === false ? '' : (opts.prefix || '[%t:%n8]');
 
     stdout.setMaxListeners(10000);
     stderr.setMaxListeners(10000);
@@ -25,6 +25,7 @@ function spinup(commands, opts) {
         var args        = parse(c.commandLine, env);
         var commandLine = args.slice(0);
         var cmd         = args.shift();
+        var commandName = c.name || cmd;
         var color       = colors.next();
         
         var child = spawn(cmd, args, {
@@ -42,7 +43,7 @@ function spinup(commands, opts) {
 
             function pad2(v) { return (v < 10 ? '0' : '') + v; }
 
-            var p = prefix.replace(/%([tpYymdHMS]|(c\d*))/g, function(m) {
+            var p = prefix.replace(/%([tpYymdHMS]|([cn]\d*))/g, function(m) {
                 switch (m[1]) {
                     case 't': return taskIx;
                     case 'p': return child.pid;
@@ -54,11 +55,13 @@ function spinup(commands, opts) {
                     case 'M': return pad2(now.getMinutes());
                     case 'S': return pad2(now.getSeconds());
                     case 'c':
+                    case 'n':
+                        var text = (m[1] === 'c') ? cmd : commandName;
                         if (m.length === 2) {
-                            return cmd;
+                            return text;
                         } else {
                             var len = parseInt(m.substr(2), 10);
-                            var str = cmd.substr(0, len);
+                            var str = text.substr(0, len);
                             while (str.length < len) {
                                 str += ' ';
                             }
