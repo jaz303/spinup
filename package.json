@@ -1,6 +1,6 @@
 {
   "name": "spinup",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Dead simple task runner for launching long-running processes during development",
   "main": "index.js",
   "directories": {
