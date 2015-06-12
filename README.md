@@ -115,6 +115,13 @@ Set the name of the signal that should be used to kill the process.
 
 Set the name that should be displayed by the `%n` prefix option.
 
+### `@noerror`
+
+Do not treat the process' `stderr` as error output (usually highlighted in red), but instead use the process' specific color.
+
+
+
+
 ## Copyright &amp; License
 
 &copy; 2014 Jason Frame [ [@jaz303](http://twitter.com/jaz303) / [jason@onehackoranother.com](mailto:jason@onehackoranother.com) ]

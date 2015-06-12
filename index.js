@@ -102,7 +102,7 @@ function spinup(commands, opts) {
             child.stderr.setEncoding('utf8');
             child.stderr
                 .pipe(makePrefixer())
-                .pipe(makeColorizer('red'))
+                .pipe(makeColorizer(c.colorizeStderr ? color : 'red'))
                 .pipe(stderr);    
         }
 

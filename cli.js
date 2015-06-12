@@ -22,6 +22,7 @@ try {
     var thisCommand;
     function newCommand() {
         thisCommand = {
+            colorizeStderr: false,
             commandLine: null,
             killSignal: 'SIGTERM',
             name: null
@@ -76,6 +77,8 @@ try {
             thisCommand.killSignal = RegExp.$1;
         } else if (option.match(/^@name\s+([^$]+)$/)) {
             thisCommand.name = RegExp.$1.trim();
+        } else if (option.match(/^@noerror/)) {
+            thisCommand.colorizeStderr = true;
         } else {
             throw new Error("unkown option: " + option);
         }
