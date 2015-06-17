@@ -115,7 +115,7 @@ function spinup(commands, opts) {
 
         child.on('error', function(err) {
             if (stderr) {
-                stderr.write(err);    
+                stderr.write(_prefix() + err.message + "\n");
             }
         });
 
