@@ -33,6 +33,7 @@ try {
 
     var lines = fs
         .readFileSync(spinfile, {encoding: 'utf8'})
+        .replace(/\\(?:\r\n?|\n)/g, ' ')
         .split(/(?:\r\n?|\n)/)
         .map(function(l) { return l.replace(/#.*?$/, ''); })
         .map(function(l) { return l.trim(); })

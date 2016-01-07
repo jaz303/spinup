@@ -12,7 +12,9 @@ watchify -o bundle.js main.js
 
 # just to demonstrate that arguments are parsed correctly
 # (courtesy of substack/shell-quote)
-echo "let's test" "the argument" parser
+echo "let's test" \
+	"the argument" \
+	parser
 
 # environment variables can be used too:
 echo "your home directory is:" $HOME
