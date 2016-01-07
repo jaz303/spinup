@@ -99,6 +99,15 @@ Supported substitutions:
 
 The default prefix is `[%t:%c6]`.
 
+### `!set`
+
+Sets an environment variable; will be available to all child processes.
+
+```
+!set PORT 3000
+!set HOST 192.168.1.123:$PORT
+```
+
 ## Per-command Options
 
 Lines beginning with `@` define per-command options and will be applied to the next command read from the configuration file.

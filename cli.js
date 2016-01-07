@@ -2,6 +2,7 @@ var spinup = require('./index');
 var fs = require('fs');
 var path = require('path');
 var dotenv = require('dotenv');
+var parse = require('shell-quote').parse;
 
 var spinfile = process.argv[2] || 'spin.up';
 var spindir = path.resolve(path.dirname(spinfile));
@@ -65,6 +66,12 @@ try {
             prefix = false;
         } else if (directive.match(/^\!prefix\s+(.*?)$/)) {
             prefix = RegExp.$1;
+        } else if (directive.match(/^\!set\s+(\w+)\s+(.*?)$/)) {
+            var key = RegExp.$1, parsed = parse(RegExp.$2, env);
+            if (parsed.length !== 1) {
+                throw new Error("value for !set directive must evaluate to a single value (try quoting with \"\")");
+            }
+            env[key] = parsed[0];
         } else {
             throw new Error("unknown directive: " + directive);
         }
