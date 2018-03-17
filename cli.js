@@ -35,7 +35,7 @@ try {
         .readFileSync(spinfile, {encoding: 'utf8'})
         .replace(/\\(?:\r\n?|\n)/g, ' ')
         .split(/(?:\r\n?|\n)/)
-        .map(function(l) { return l.replace(/#.*?$/, ''); })
+        .map(function(l) { return l.replace(/^\s*#.*?$/, ''); })
         .map(function(l) { return l.trim(); })
         .filter(function(l) { return l.length > 0; })
         .forEach(function(l) {
