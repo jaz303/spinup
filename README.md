@@ -88,7 +88,7 @@ Supported substitutions:
   * `%t`: task number (i.e. the `t`th task listed in `spin.up`, starting from zero)
   * `%p`: process ID
   * `%c`: command; can optionally be suffixed with a number to restrict/pad output length
-  * '%n': command name, as specified by per-command option @name; if unspecified, defaults to command
+  * `%n`: command name, as specified by per-command option @name; if unspecified, defaults to command
   * `%Y`: year (4 digits)
   * `%y`: year (2 digits)
   * `%m`: month
