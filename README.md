@@ -32,12 +32,25 @@ And when we run `spinup`:
 
 ## Installation
 
-    npm install -g spinup
+Spinup can be installed globally, or run locally via `npx`. To install globally:
+
+```shell
+$ npm install -g spinup
+```
+
+For local usage:
+
+```shell
+$ npm install spinup
+$ touch spin.up
+$ npx spinup
+```
+
 
 ## Usage
 
 ```shell
-spinup [config]
+$ spinup [config]
 ```
 
 `config`: optional path to configuration file, defaults to `./spin.up`.
@@ -133,6 +146,6 @@ Do not treat the process' `stderr` as error output (usually highlighted in red),
 
 ## Copyright &amp; License
 
-&copy; 2014 Jason Frame [ [@jaz303](http://twitter.com/jaz303) / [jason@onehackoranother.com](mailto:jason@onehackoranother.com) ]
+&copy; 2014-2018 Jason Frame [ [@jaz303](http://twitter.com/jaz303) / [jason@onehackoranother.com](mailto:jason@onehackoranother.com) ]
 
 Released under the ISC license.
