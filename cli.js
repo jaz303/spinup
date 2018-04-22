@@ -4,10 +4,38 @@ var path = require('path');
 var dotenv = require('dotenv');
 var parse = require('shell-quote').parse;
 
-var spinfile = process.argv[2] || 'spin.up';
-var spindir = path.resolve(path.dirname(spinfile));
+var config = (function(c) {
+    var activeFlag = null;
+    process.argv.slice(2).forEach((arg) => {
+        if (activeFlag) {
+            if (activeFlag === 'group') {
+                c.groups = c.groups.concat(arg.split(','));
+            }
+            activeFlag = null;
+        } else if (arg[0] === '-') {
+            if (arg === '-g' || arg === '--group') {
+                activeFlag = 'group';
+            } else {
+                throw new Error("Unknown command line option: " + arg);
+            }
+        } else {
+            c.spinfile = arg;
+        }
+    });
+    if (activeFlag) {
+        throw new Error("Expected argument for " + activeFlag);
+    }
+    if (c.groups.length === 0) {
+        c.groups = null;
+    }
+    c.spindir = path.resolve(path.dirname(c.spinfile));
+    return c;
+})({
+    spinfile: 'spin.up',
+    groups: []
+});
 
-dotenv._getKeysAndValuesFromEnvFilePath(spindir + '/.env');
+dotenv._getKeysAndValuesFromEnvFilePath(config.spindir + '/.env');
 dotenv._setEnvs();
 
 var commands = [],
@@ -16,7 +44,15 @@ var commands = [],
     prefix = null,
     env = process.env;
 
-env.SPINDIR = spindir;
+const commandOptionHandlers = [
+    [/^@cd\s+([^$]+)$/,         (cmd) => { cmd.workingDirectory = RegExp.$1; }],
+    [/^@kill\s+([^$]+)$/,       (cmd) => { cmd.killSignal = RegExp.$1; }],
+    [/^@name\s+([^$]+)$/,       (cmd) => { cmd.name = RegExp.$1.trim(); }],
+    [/^@noerror/,               (cmd) => { cmd.colorizeStderr = true; }],
+    [/^@groups?(\s+([\w]+))+$/, (cmd) => { cmd.groups = RegExp.$1.trim().split(/\s+/); }]
+];
+
+env.SPINDIR = config.spindir;
 
 try {
 
@@ -26,13 +62,14 @@ try {
             colorizeStderr: false,
             commandLine: null,
             killSignal: 'SIGTERM',
-            name: null
+            name: null,
+            groups: ['default']
         };
     }
     newCommand();
 
     var lines = fs
-        .readFileSync(spinfile, {encoding: 'utf8'})
+        .readFileSync(config.spinfile, {encoding: 'utf8'})
         .replace(/\\(?:\r\n?|\n)/g, ' ')
         .split(/(?:\r\n?|\n)/)
         .map(function(l) { return l.replace(/^\s*#.*?$/, ''); })
@@ -79,22 +116,22 @@ try {
     }
 
     function applyCommandOption(option) {
-        if (option.match(/^@cd\s+([^$]+)$/)) {
-            thisCommand.workingDirectory = RegExp.$1;
-        } else if (option.match(/^@kill\s+([^$]+)$/)) {
-            thisCommand.killSignal = RegExp.$1;
-        } else if (option.match(/^@name\s+([^$]+)$/)) {
-            thisCommand.name = RegExp.$1.trim();
-        } else if (option.match(/^@noerror/)) {
-            thisCommand.colorizeStderr = true;
-        } else {
+        let handled = false;
+        for (let i = 0; i < commandOptionHandlers.length; ++i) {
+            if (option.match(commandOptionHandlers[i][0])) {
+                commandOptionHandlers[i][1](thisCommand);
+                handled = true;
+                break;
+            }
+        }
+        if (!handled) {
             throw new Error("unkown option: " + option);
         }
     }
 
 } catch (e) {
     if (e.code === 'ENOENT') {
-        process.stderr.write("couldn't open spinup config: " + spinfile + "\n"); 
+        process.stderr.write("couldn't open spinup config: " + config.spinfile + "\n"); 
     } else {
         process.stderr.write(e.message + "\n");
     }
@@ -114,6 +151,7 @@ if (!exiting) {
         env     : env,
         stdout  : process.stdout,
         stderr  : process.stderr,
-        prefix  : prefix
+        prefix  : prefix,
+        groups  : config.groups
     });
 }
