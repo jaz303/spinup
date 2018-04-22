@@ -16,11 +16,14 @@ function spinup(commands, opts) {
     var useColor    = ('color' in opts) ? (!!opts.color) : stdout.isTTY;
     var colors      = list(['green', 'yellow', 'blue', 'magenta', 'cyan']);
     var prefix      = opts.prefix === false ? '' : (opts.prefix || '[%t:%n8]');
+    var groups      = opts.groups || null;
 
     stdout.setMaxListeners(10000);
     stderr.setMaxListeners(10000);
 
-    procs = commands.map(function(c, taskIx) {
+    procs = commands.filter((c) => {
+        return (groups === null) || groups.some(g => c.groups.indexOf(g) >= 0);
+    }).map(function(c, taskIx) {
 
         var args        = parse(c.commandLine, env);
         var commandLine = args.slice(0);
