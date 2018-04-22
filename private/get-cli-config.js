@@ -1,22 +1,28 @@
 const path = require('path');
 
+const flags = {
+    '-g'        : 'group',
+    '--group'   : 'group'
+};
+
+const flagHandlers = {
+    group: (c, arg) => {
+        c.groups = c.groups.concat(arg.split(',')); return true;
+    }
+};
+
 module.exports = function() {
-    const c = {
-        spinfile: 'spin.up',
-        groups: []
-    };
+    const c = defaultConfig();
 
     let activeFlag = null;
     process.argv.slice(2).forEach((arg) => {
         if (activeFlag) {
-            if (activeFlag === 'group') {
-                c.groups = c.groups.concat(arg.split(','));
+            if (flagHandlers[activeFlag](c, arg)) {
+                activeFlag = null;
             }
-            activeFlag = null;
         } else if (arg[0] === '-') {
-            if (arg === '-g' || arg === '--group') {
-                activeFlag = 'group';
-            } else {
+            activeFlag = flags[arg];
+            if (!activeFlag) {
                 throw new Error("Unknown command line option: " + arg);
             }
         } else {
@@ -35,4 +41,11 @@ module.exports = function() {
     c.spindir = path.resolve(path.dirname(c.spinfile));
     
     return c;
+}
+
+function defaultConfig() {
+    return {
+        spinfile: 'spin.up',
+        groups: []
+    };
 }
