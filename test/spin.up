@@ -3,6 +3,7 @@
 
 # webserver
 @kill SIGINT
+@group test
 @name www
 python -m SimpleHTTPServer 9000
 
@@ -21,9 +22,11 @@ echo "your home directory is:" $HOME
 echo $TMP
 
 # environment variables are loaded from .env:
+@group moose
 echo $DOTENV_TEST
 
 # spinfile location
+@group test
 echo "Directory of spin.up:" $SPINDIR
 
 # cd test
