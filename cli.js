@@ -13,6 +13,38 @@ var commands = [],
     prefix = null,
     env = process.env;
 
+const directiveHandlers = [
+    [/^\!ports\s+(\$(\w+)\:)?(\d+)((\s+\$\w+)*)\s*$/, () => {
+        let base = RegExp.$3;
+        if (RegExp.$2 && (RegExp.$2 in env)) {
+            base = env[RegExp.$2];
+        }
+        base = parseInt(base, 10);
+        if (!isFinite(base)) {
+            throw new Error("invalid base port; must be numeric");
+        }
+        RegExp.$4.trim().split(/\s+/).forEach(function(v) {
+            env[v.substring(1)] = base++;
+        });
+    }],
+    [/^\!noprefix$/, () => {
+        prefix = false;
+    }],
+    [/^\!prefix\s+(.*?)$/, () => {
+        prefix = RegExp.$1;
+    }],
+    [/^\!(set|default)\s+(\w+)\s+(.*?)$/, () => {
+        const op = RegExp.$1, key = RegExp.$2, parsed = parse(RegExp.$3, env);
+        if (op === 'default' && (key in env)) {
+            return;
+        }
+        if (parsed.length !== 1) {
+            throw new Error("value for !" + op + " directive must evaluate to a single value (try quoting with \"\")");
+        }
+        env[key] = parsed[0];
+    }],
+];
+
 const commandOptionHandlers = [
     [/^@cd\s+([^$]+)$/,         (cmd) => { cmd.workingDirectory = RegExp.$1; }],
     [/^@kill\s+([^$]+)$/,       (cmd) => { cmd.killSignal = RegExp.$1; }],
@@ -57,45 +89,23 @@ try {
         });
 
     function applyDirective(directive) {
-        if (directive.match(/^\!ports\s+(\$(\w+)\:)?(\d+)((\s+\$\w+)*)\s*$/)) {
-            var base = RegExp.$3;
-            if (RegExp.$2 && (RegExp.$2 in env)) {
-                base = env[RegExp.$2];
+        for (let i = 0; i < directiveHandlers.length; ++i) {
+            if (directive.match(directiveHandlers[i][0])) {
+                directiveHandlers[i][1]();
+                return;
             }
-            base = parseInt(base, 10);
-            if (!isFinite(base)) {
-                throw new Error("invalid base port; must be numeric");
-            }
-            RegExp.$4.trim().split(/\s+/).forEach(function(v) {
-                env[v.substring(1)] = base++;
-            });
-        } else if (directive.match(/^\!noprefix$/)) {
-            prefix = false;
-        } else if (directive.match(/^\!prefix\s+(.*?)$/)) {
-            prefix = RegExp.$1;
-        } else if (directive.match(/^\!set\s+(\w+)\s+(.*?)$/)) {
-            var key = RegExp.$1, parsed = parse(RegExp.$2, env);
-            if (parsed.length !== 1) {
-                throw new Error("value for !set directive must evaluate to a single value (try quoting with \"\")");
-            }
-            env[key] = parsed[0];
-        } else {
-            throw new Error("unknown directive: " + directive);
         }
+        throw new Error("unknown directive: " + directive);
     }
 
     function applyCommandOption(option) {
-        let handled = false;
         for (let i = 0; i < commandOptionHandlers.length; ++i) {
             if (option.match(commandOptionHandlers[i][0])) {
                 commandOptionHandlers[i][1](thisCommand);
-                handled = true;
-                break;
+                return;
             }
         }
-        if (!handled) {
-            throw new Error("unkown option: " + option);
-        }
+        throw new Error("unkown option: " + option);
     }
 
 } catch (e) {
