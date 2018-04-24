@@ -1,5 +1,6 @@
 !prefix [%Y-%m-%dT%H:%M:%S | %t:%n6]
 !set TMP "I SAID YOUR HOME DIRECTORY IS $HOME"
+!default DEFAULT "This is the default value"
 
 # webserver
 @kill SIGINT
@@ -33,3 +34,4 @@ echo "Directory of spin.up:" $SPINDIR
 @cd foobar
 cat test
 
+echo $DEFAULT
