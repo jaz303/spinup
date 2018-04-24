@@ -59,6 +59,24 @@ $ spinup [config]
 
 Leading lines of the `spin.up` file can include _directives_. Directives begin with a `!`, followed by the name of the directive and then its arguments.
 
+### `!default`
+
+Sets an environment variable if it does not already exist.
+
+```
+!default PORT 3000
+echo $PORT
+```
+
+```shell
+$ spinup
+3000
+$ PORT=5000 spinup
+5000
+```
+
+See also: `!set`, to unconditionally set an environment variable.
+
 ### `!noprefix`
 
 Do not add a prefix onto each line of output.
@@ -120,6 +138,8 @@ Sets an environment variable; will be available to all child processes.
 !set PORT 3000
 !set HOST 192.168.1.123:$PORT
 ```
+
+See also: `!default`
 
 ## Per-command Options
 
