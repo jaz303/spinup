@@ -1,47 +1,44 @@
-var spinup = require('./index');
-var fs = require('fs');
-var dotenv = require('dotenv');
-var parse = require('shell-quote').parse;
-var config = require('./private/get-cli-config')();
+const spinup = require('./index');
+const fs = require('fs');
+const dotenv = require('dotenv');
+const parse = require('shell-quote').parse;
+const config = require('./private/get-cli-config')();
 
 dotenv._getKeysAndValuesFromEnvFilePath(config.spindir + '/.env');
 dotenv._setEnvs();
+config.env.SPINDIR = config.spindir;
 
-var commands = [],
-    instance = null,
-    exiting = false,
-    prefix = null,
-    env = process.env;
+let instance = null, exiting = false;
 
 const directiveHandlers = [
     [/^\!ports\s+(\$(\w+)\:)?(\d+)((\s+\$\w+)*)\s*$/, () => {
         let base = RegExp.$3;
-        if (RegExp.$2 && (RegExp.$2 in env)) {
-            base = env[RegExp.$2];
+        if (RegExp.$2 && (RegExp.$2 in config.env)) {
+            base = config.env[RegExp.$2];
         }
         base = parseInt(base, 10);
         if (!isFinite(base)) {
             throw new Error("invalid base port; must be numeric");
         }
         RegExp.$4.trim().split(/\s+/).forEach(function(v) {
-            env[v.substring(1)] = base++;
+            config.env[v.substring(1)] = base++;
         });
     }],
     [/^\!noprefix$/, () => {
-        prefix = false;
+        config.prefix = false;
     }],
     [/^\!prefix\s+(.*?)$/, () => {
-        prefix = RegExp.$1;
+        config.prefix = RegExp.$1;
     }],
     [/^\!(set|default)\s+(\w+)\s+(.*?)$/, () => {
-        const op = RegExp.$1, key = RegExp.$2, parsed = parse(RegExp.$3, env);
-        if (op === 'default' && (key in env)) {
+        const op = RegExp.$1, key = RegExp.$2, parsed = parse(RegExp.$3, config.env);
+        if (op === 'default' && (key in config.env)) {
             return;
         }
         if (parsed.length !== 1) {
             throw new Error("value for !" + op + " directive must evaluate to a single value (try quoting with \"\")");
         }
-        env[key] = parsed[0];
+        config.env[key] = parsed[0];
     }],
 ];
 
@@ -53,11 +50,9 @@ const commandOptionHandlers = [
     [/^@groups?(\s+([\w]+))+$/, (cmd) => { cmd.groups = RegExp.$1.trim().split(/\s+/); }]
 ];
 
-env.SPINDIR = config.spindir;
-
 try {
 
-    var thisCommand;
+    let thisCommand;
     function newCommand() {
         thisCommand = {
             colorizeStderr: false,
@@ -69,8 +64,7 @@ try {
     }
     newCommand();
 
-    var lines = fs
-        .readFileSync(config.spinfile, {encoding: 'utf8'})
+    fs.readFileSync(config.spinfile, {encoding: 'utf8'})
         .replace(/\\(?:\r\n?|\n)/g, ' ')
         .split(/(?:\r\n?|\n)/)
         .map(function(l) { return l.replace(/^\s*#.*?$/, ''); })
@@ -83,7 +77,7 @@ try {
                 applyCommandOption(l);
             } else {
                 thisCommand.commandLine = l;
-                commands.push(thisCommand);
+                config.commands.push(thisCommand);
                 newCommand();
             }
         });
@@ -126,11 +120,11 @@ process.on('SIGINT', function() {
 });
 
 if (!exiting) {
-    instance = spinup(commands, {
-        env     : env,
+    instance = spinup(config.commands, {
+        env     : config.env,
         stdout  : process.stdout,
         stderr  : process.stderr,
-        prefix  : prefix,
+        prefix  : config.prefix,
         groups  : config.groups
     });
 }

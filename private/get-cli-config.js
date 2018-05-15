@@ -46,6 +46,9 @@ module.exports = function() {
 function defaultConfig() {
     return {
         spinfile: 'spin.up',
-        groups: []
+        groups: [],
+        prefix: null,
+        commands: [],
+        env: process.env
     };
 }
