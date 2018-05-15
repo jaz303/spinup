@@ -4,9 +4,7 @@ Spinup is a simple process runner for use during development, designed for bring
 
 Using Spinup is as simple as creating a `spin.up` file containing one shell command per line in your project's root directory and then running the `spinup` executable.
 
-And when we run `spinup`:
-
-![spinup screenshot](https://raw.githubusercontent.com/jaz303/spinup/master/screenshot.png)
+![spinup demo](demo.gif)
 
 Spinup is pretty customisable. Let's take a look at an example config file:
 
@@ -58,8 +56,8 @@ $ npx spinup
 
 ## Usage
 
-```shell
-$ spinup [-g | --group groups] [config]
+```
+$ spinup [-g | --group $group_list] [config]
 ```
 
   - `-g | --group`: optional comma separated list of groups to run; can be specified multiple times
@@ -161,7 +159,7 @@ Set the working directory for the command.
 
 ### `@group GROUP_LIST`, `@groups GROUP_LIST`
 
-Space-separated list of groups that the next command belongs to. The command line option `-g` | `--group` to `spinup` can be used to restrict which groups' commands are launched.
+Space-separated list of groups that the next command belongs to. The command line option `-g` / `--group` can be used to restrict which groups' commands are launched.
 
 Any command for which `group` is not specified will belong to the `default` group.
 
