@@ -1,34 +1,44 @@
 # spinup
 
-`spinup` is a dead simple runner for long-running processes (such as servers and file-watchers) designed for use during development. Simply create a `spin.up` file containing one shell command per line and launch them all by running `spinup`.
+Spinup is a simple process runner for use during development, designed for bringing up all necessary servers and file-watchers with a single command.
 
-Let's take a look at a simple `spin.up` file:
-
-    # webserver
-    python -m SimpleHTTPServer 9000
-
-    # compile javascript
-    watchify -o bundle.js main.js
-
-    # command options are prefixed with @ and will be applied to next
-    # command line
-    @cd www
-    php -S 127.0.0.1:8000
-
-    # just to demonstrate that arguments are parsed correctly
-    # (courtesy of substack/shell-quote)
-    echo "let's test" "the argument" parser
-
-    # environment variables can be used too:
-    echo "your home directory is:" $HOME
+Using Spinup is as simple as creating a `spin.up` file containing one shell command per line in your project's root directory and then running the `spinup` executable.
 
 And when we run `spinup`:
 
 ![spinup screenshot](https://raw.githubusercontent.com/jaz303/spinup/master/screenshot.png)
 
+Spinup is pretty customisable. Let's take a look at an example config file:
+
+```
+# (lines beginning with # are comments...)
+
+# Directives are denoted by "!" and come before any commands
+# Directives are used to configure global settings.
+# (!prefix sets the prefix for each line of output)
+!prefix [%p]
+
+# Run the webserver
+python -m SimpleHTTPServer 9000
+
+# Compile some JavaScript
+watchify -o bundle.js main.js
+
+# Per-command options are prefixed with @ and will be applied to the next command
+# (@cd sets the working directory for the next command)
+@cd www
+php -S 127.0.0.1:8000
+
+# Shell arguments are parsed correctly...
+echo "let's test" "the argument" parser
+
+# ...and environment variables can be used too:
+echo "your home directory is:" $HOME
+```
+
 `spinup` will run until all child processes have exited. Hit `Ctrl-C` to send `SIGTERM` to any that are still running (this kill signal can be customised on a per-command basis, see the `@kill` option below).
 
-`dotenv` is supported; any environment variables defined within `.env` will made available to the commands listed in `spin.up`.
+`dotenv` is also supported; any environment variables defined within `.env` will made available to the commands listed in `spin.up`.
 
 ## Installation
 
@@ -46,14 +56,14 @@ $ touch spin.up
 $ npx spinup
 ```
 
-
 ## Usage
 
 ```shell
-$ spinup [config]
+$ spinup [-g | --group groups] [config]
 ```
 
-`config`: optional path to configuration file, defaults to `./spin.up`.
+  - `-g | --group`: optional comma separated list of groups to run; can be specified multiple times
+  - `config`: optional path to configuration file, defaults to `./spin.up`.
 
 ## Directives
 
@@ -149,6 +159,12 @@ Lines beginning with `@` define per-command options and will be applied to the n
 
 Set the working directory for the command.
 
+### `@group GROUP_LIST`, `@groups GROUP_LIST`
+
+Space-separated list of groups that the next command belongs to. The command line option `-g` | `--group` to `spinup` can be used to restrict which groups' commands are launched.
+
+Any command for which `group` is not specified will belong to the `default` group.
+
 ### `@kill SIGNAL`
 
 Set the name of the signal that should be used to kill the process.
@@ -160,9 +176,6 @@ Set the name that should be displayed by the `%n` prefix option.
 ### `@noerror`
 
 Do not treat the process' `stderr` as error output (usually highlighted in red), but instead use the process' specific color.
-
-
-
 
 ## Copyright &amp; License
 
