@@ -130,7 +130,7 @@ function spinup(commands, opts) {
         kill: function(p) {
             procs.forEach(function(p) {
                 if (!p.exited) {
-                    p.kill(p.killSignal);    
+                    process.kill(-p.pid, p.killSignal);    
                 }   
             });
         }
