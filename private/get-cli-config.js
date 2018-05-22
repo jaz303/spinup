@@ -1,11 +1,9 @@
 const path = require('path');
 
-const flags = {
+const handlers = {
     '-g'        : 'group',
-    '--group'   : 'group'
-};
+    '--group'   : 'group',
 
-const flagHandlers = {
     group: (c, arg) => {
         c.groups = c.groups.concat(arg.split(',')); return true;
     }
@@ -17,12 +15,16 @@ module.exports = function() {
     let activeFlag = null;
     process.argv.slice(2).forEach((arg) => {
         if (activeFlag) {
-            if (flagHandlers[activeFlag](c, arg)) {
+            if (handlers[activeFlag](c, arg)) {
                 activeFlag = null;
             }
         } else if (arg[0] === '-') {
-            activeFlag = flags[arg];
-            if (!activeFlag) {
+            const candidate = handlers[arg];
+            if (typeof candidate === 'function') {
+                candidate(c);
+            } else if (candidate) {
+                activeFlag = candidate;
+            } else {
                 throw new Error("Unknown command line option: " + arg);
             }
         } else {
