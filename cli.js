@@ -111,13 +111,18 @@ try {
     process.exit(1);
 }
 
-process.on('SIGINT', function() {
+function killall() {
     exiting = true;
     process.stderr.write("sending SIGINT to all children...\n");
     if (instance) {
         instance.kill();
     }
-});
+}
+
+process.on('SIGINT', killall);
+if (!config.daemon) {
+    process.on('SIGHUP', killall);
+}
 
 if (!exiting) {
     instance = spinup(config.commands, {

@@ -3,6 +3,7 @@ const path = require('path');
 const handlers = {
     '-g'        : 'group',
     '--group'   : 'group',
+    '--nohup'   : (c) => { c.daemon = true },
 
     group: (c, arg) => {
         c.groups = c.groups.concat(arg.split(',')); return true;
@@ -51,6 +52,7 @@ function defaultConfig() {
         groups: [],
         prefix: null,
         commands: [],
-        env: process.env
+        env: process.env,
+        daemon: false
     };
 }
