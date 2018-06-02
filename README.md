@@ -4,6 +4,8 @@ Spinup is a simple process runner for use during development, designed for bring
 
 Using Spinup is as simple as creating a `spin.up` file containing one shell command per line in your project's root directory and then running the `spinup` executable.
 
+Supports process groups, per-process kill signals, daemonisation, environment variables (inc. dotenv), and configurable output formatting.
+
 ![spinup demo](demo.gif)
 
 Spinup is pretty customisable. Let's take a look at an example config file:
